@@ -795,11 +795,7 @@ namespace Marbles
             textures.Add(12);
             textures.Add(13);
             textures.Add(14);
-
-            var sw = new StreamWriter("Debug.txt");
-            sw.WriteLine(textures.Count);
-            sw.Close();
-
+            
             for (int i = 0; i < textures.Count; i++)
                 Marbles[i].Type = (CelestialBodyType)textures[i];
 
