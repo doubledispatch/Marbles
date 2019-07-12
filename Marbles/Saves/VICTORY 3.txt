@@ -1,0 +1,42 @@
+Marbles
+
+Undos 0
+
+Marble: Slot 17; Body Pluto;
+
+Move: From 2; Passing -1; To -1; Marble Venus;
+Move: From 12; Passing 6; To 2; Marble Neptune;
+Move: From 4; Passing 5; To 6; Marble Mercury;
+Move: From 26; Passing 19; To 12; Marble Moon;
+Move: From 21; Passing 20; To 19; Marble Jupiter;
+Move: From 17; Passing 10; To 4; Marble Venus;
+Move: From 7; Passing 6; To 5; Marble Saturn;
+Move: From 19; Passing 12; To 6; Marble Mars;
+Move: From 14; Passing 13; To 12; Marble Callisto;
+Move: From 11; Passing 12; To 13; Marble Uranus;
+Move: From 2; Passing 6; To 12; Marble RedDwarf;
+Move: From 1; Passing 5; To 11; Marble Moon;
+Move: From 33; Passing 27; To 20; Marble Pluto;
+Move: From 13; Passing 20; To 27; Marble Mars;
+Move: From 28; Passing 27; To 26; Marble Neptune;
+Move: From 25; Passing 26; To 27; Marble Mars;
+Move: From 36; Passing 32; To 26; Marble Mercury;
+Move: From 12; Passing 11; To 10; Marble Saturn;
+Move: From 27; Passing 26; To 25; Marble Makemake;
+Move: From 25; Passing 18; To 11; Marble Mars;
+Move: From 15; Passing 16; To 17; Marble Uranus;
+Move: From 3; Passing 9; To 16; Marble Ceres;
+Move: From 11; Passing 10; To 9; Marble Uranus;
+Move: From 0; Passing 4; To 10; Marble Makemake;
+Move: From 17; Passing 10; To 4; Marble Earth;
+Move: From 8; Passing 9; To 10; Marble Venus;
+Move: From 23; Passing 24; To 25; Marble Jupiter;
+Move: From 34; Passing 30; To 24; Marble Pluto;
+Move: From 25; Passing 24; To 23; Marble Earth;
+Move: From 22; Passing 23; To 24; Marble Jupiter;
+Move: From 35; Passing 31; To 25; Marble Jupiter;
+Move: From 4; Passing 10; To 17; Marble Ceres;
+Move: From 17; Passing 16; To 15; Marble Earth;
+Move: From 25; Passing 24; To 23; Marble Saturn;
+Move: From 29; Passing 23; To 16; Marble Mercury;
+Move: From 15; Passing 16; To 17; Marble OrangeDwarf;

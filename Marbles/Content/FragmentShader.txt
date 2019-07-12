@@ -1,0 +1,168 @@
+﻿#version 330
+//uniform vec4 uLightPosition;
+uniform vec4 uEyePosition;
+in vec3 oPosition;
+in vec4 oEyeNormal;
+in vec4 oSurfacePosition;
+out vec4 FragColour;
+
+uniform sampler2D uTextureSampler;
+uniform sampler2D uSpecularSampler;
+uniform bool uLightingEnabled = true;
+uniform bool uTexturesEnabled = true;
+uniform bool uSpecularMapEnabled = false;
+uniform vec4 uColour = vec4(1, 1, 1, 1);
+//uniform float uHighlight = 0;
+uniform bool u3D = true;
+uniform bool uPosterisation = false;
+uniform bool uGreyscale = false;
+//in vec2 oTexCoords;
+
+// For the purposes of calculating texture coordinates
+uniform int uCurrentModel;
+const int MODEL_SPHERE = 0;
+const int MODEL_SQUARE = 1;
+const int MODEL_RING = 2;
+const float RING_THICKNESS = 0.4;
+
+struct LightProperties
+{
+	bool Enabled;
+	vec4 Position;
+	float Intensity;
+	vec3 AmbientLight;
+	vec3 DiffuseLight;
+	vec3 SpecularLight;
+};
+
+struct MaterialProperties
+{
+	vec3 AmbientReflectivity;
+	vec3 DiffuseReflectivity;
+	vec3 SpecularReflectivity;
+	float Shininess;
+};
+
+uniform LightProperties uLight[4];
+uniform MaterialProperties uMaterial;
+
+const float PI = 3.14159;
+
+void main()
+{
+	//FragColour = vec4(1,0,0,1);
+	//return;
+
+	//FragColour = vec4(1, 0, 0, 1);
+	//FragColour = vec4(oEyeNormal.x, oEyeNormal.y, oEyeNormal.z, 1);
+	//FragColour = vec4(oTexCoords.x, oTexCoords.y, 0, 1);
+	//return;
+
+	vec2 texCoords;
+	vec4 tex;
+	if (uTexturesEnabled)
+	{
+		//tex = texture(uTextureSampler, oTexCoords);
+		switch (uCurrentModel)
+		{
+			case MODEL_SPHERE:
+				texCoords = vec2(atan(-oPosition.x, oPosition.y) / PI * 0.5, acos(oPosition.z) / PI);
+				break;
+			case MODEL_SQUARE:
+				texCoords = vec2(oPosition.x + 0.5, -oPosition.y + 0.5);
+				break;
+			case MODEL_RING:
+				texCoords = vec2(atan(-oPosition.x, oPosition.y) / PI * 0.5, (length(oPosition.xy) + RING_THICKNESS - 1) / RING_THICKNESS);
+				break;
+		}
+		tex = texture(uTextureSampler, texCoords);
+	}
+	else
+		tex = vec4(1);
+
+	if (uLightingEnabled)
+	{
+		vec4 eyeDirection = normalize(uEyePosition - oSurfacePosition);
+		FragColour = vec4(0, 0, 0, tex.a);
+
+		for (int i = 0; i < 4; ++i)
+		{
+			if (!uLight[i].Enabled)
+				continue;
+			
+			vec4 lightDisplacement = uLight[i].Position - oSurfacePosition;
+			float distance = length(lightDisplacement);
+			float distanceMultiplier = (pow(uLight[i].Intensity, 2) / pow(distance, 2));
+			vec4 lightDir = normalize(lightDisplacement);
+
+			vec4 reflectedVector = reflect(-lightDir, oEyeNormal);
+			float specularFactor = pow(max(dot(reflectedVector, eyeDirection), 0.0), uMaterial.Shininess);
+			vec3 specularTex = uSpecularMapEnabled ? texture(uSpecularSampler, texCoords).xyz : vec3(1);
+			float diffuseFactor = max(dot(oEyeNormal, lightDir), 0);
+
+			FragColour += vec4(vec3(min(1, distanceMultiplier) * uLight[i].AmbientLight * tex.xyz * uMaterial.AmbientReflectivity
+						  + distanceMultiplier * diffuseFactor * uLight[i].DiffuseLight * tex.xyz * uMaterial.DiffuseReflectivity
+						  + distanceMultiplier * specularFactor * uLight[i].SpecularLight * specularTex * uMaterial.SpecularReflectivity), 0);
+
+			//FragColour = vec4(oNormal / 2.0 + vec3(0.5), 1);
+
+			/*if (oPosition.x < 0)
+				FragColour.r = 0;
+			if (oPosition.y < 0)
+				FragColour.g = 0;
+			if (oPosition.z < 0)
+				FragColour.b = 0;*/
+		}
+	}
+	else
+		FragColour = tex;
+
+	/*if (uTexturesEnabled)
+	{
+		//FragColour *= texture(uTextureSampler, oTexCoords);
+		if (u3D)
+			FragColour *= texture(uTextureSampler, vec2(atan(-oPosition.x, oPosition.y) / PI * 0.5, acos(oPosition.z) / PI));
+		else
+			FragColour *= texture(uTextureSampler, vec2(oPosition.x + 0.5, -oPosition.y + 0.5));
+	}*/
+
+	FragColour *= uColour;
+	//FragColour.xyz /= distance(uEyePosition, oSurfacePosition);
+
+	/*if (uHighlight > 0)
+	{
+		float dot = dot(oEyeNormal.xyz, vec3(0, 0, 1));
+		float white = uHighlight * (1 - dot);
+		float black = 1 - (uHighlight * dot) / 2;
+		FragColour.r = (FragColour.r + (1 - FragColour.r) * white) * black;
+		FragColour.g = (FragColour.g + (1 - FragColour.g) * white) * black;
+		FragColour.b = (FragColour.b + (1 - FragColour.b) * white) * black;
+
+		//float mult = uHighlight * (1 - dot(oEyeNormal.xyz, vec3(0, 0, 1)));
+		//FragColour.r += (1 - FragColour.r) * mult;
+		//FragColour.g += (1 - FragColour.g) * mult;
+		//FragColour.b += (1 - FragColour.b) * mult;
+	}*/
+	
+	if (uPosterisation)
+	{
+		/*FragColour.r = 1 - FragColour.r;
+		FragColour.g = 1 - FragColour.g;
+		FragColour.b = 1 - FragColour.b;
+		return;*/
+		
+		float L = uLightingEnabled ? 2 : 1;
+		const float B = 0.2;
+		float average = (FragColour.r + FragColour.g + FragColour.b) / 3;
+		FragColour.r = B + (1 - B) * floor((FragColour.r * 2 - average) * L + 0.5) / L;
+		FragColour.g = B + (1 - B) * floor((FragColour.g * 2 - average) * L + 0.5) / L;
+		FragColour.b = B + (1 - B) * floor((FragColour.b * 2 - average) * L + 0.5) / L;
+	}
+	if (uGreyscale)
+	{
+		float shade = sqrt(pow(FragColour.r, 2) * 0.241 + pow(FragColour.g, 2) * 0.691 + pow(FragColour.b, 2) * 0.068);
+		FragColour.r = shade;
+		FragColour.g = shade;
+		FragColour.b = shade;
+	}
+}

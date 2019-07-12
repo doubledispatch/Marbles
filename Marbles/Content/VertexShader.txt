@@ -1,0 +1,115 @@
+﻿// I do not include normal and texcoord information because, for spheres, rings and quads, these can easily be calculated from the positions
+
+#version 330
+uniform mat4 uModel;
+uniform mat4 uView;
+uniform mat4 uProjection;
+uniform bool u3D = true;
+uniform int uCurrentModel;
+in vec3 vPosition;
+//in vec3 vNormal;
+out vec3 oPosition;
+out vec4 oEyeNormal;
+out vec4 oSurfacePosition;
+
+//in vec2 vTexCoords;
+//out vec2 oTexCoords;
+
+const int MODEL_SPHERE = 0;
+const int MODEL_SQUARE = 1;
+const int MODEL_RING = 2;
+const int MODEL_CYLINDER = 3;
+
+void main()
+{
+	if (u3D)
+	{
+		vec3 pos = vPosition;
+		/*if (pos.x < 0)
+			pos.x *= -pos.x;
+		else
+			pos.x *= pos.x;
+
+		if (pos.y < 0)
+			pos.y *= -pos.y;
+		else
+			pos.y *= pos.y;
+
+		if (pos.z < 0)
+			pos.z *= -pos.z;
+		else
+			pos.z *= pos.z;*/
+
+		gl_Position = vec4(pos, 1) * uModel * uView * uProjection;
+		oSurfacePosition = vec4(vPosition, 1) * uModel * uView;
+
+		if (uCurrentModel == MODEL_SPHERE)
+			oEyeNormal = vec4(normalize(vPosition * mat3(transpose(inverse(uModel * uView)))), 1);
+		else if (uCurrentModel == MODEL_RING)
+			oEyeNormal = vec4(normalize(vec3(0, 0, 1) * mat3(transpose(inverse(uModel * uView)))), 1);
+	}
+	else
+		gl_Position = vec4(vPosition, 1) * uModel;
+
+	oPosition = vPosition;
+	//oTexCoords = vTexCoords;
+}
+
+
+
+
+
+
+
+/*#version 330
+uniform mat4 uModel;
+uniform mat4 uView;
+uniform mat4 uProjection;
+in vec3 vPosition;
+in vec3 vNormal;
+out vec4 Colour;
+//out vec4 oSurfacePosition;
+
+// in vec2 vTexCoords;
+// out vec2 oTexCoords;
+
+void main()
+{
+	gl_Position = vec4(vPosition, 1) * uModel * uView * uProjection; 
+
+	//oColour = vec4(0, 0, 0, 1);
+	//oColour = vec4(vNormal * 0.5 + 0.5, 1);
+
+	vec3 uLightDirection = vec3(0, 1, 1);
+
+	vec3 inverseTransposeNormal = normalize(vNormal * mat3(transpose(inverse(uModel * uView))));
+	vec3 lightDir = normalize(-uLightDirection * mat3(uView));
+	Colour = vec4(vec3(max(dot(inverseTransposeNormal, lightDir), 0)), 1);
+
+	// oColour = vec4(vec3(max(dot(vNormal, -uLightDirection), 0)), 1);
+
+	// oTexCoords = vTexCoords;
+}*/
+
+/*uniform mat4 uModel;
+uniform mat4 uView;
+uniform mat4 uProjection;
+
+in vec3 vPosition;
+in vec3 vNormal;
+
+out vec4 Colour;
+
+void main()
+{
+	gl_Position = vec4(vPosition, 1) * uModel * uView * uProjection; 
+
+	//oColour = vec4(0, 0, 0, 1);
+	//oColour = vec4(vNormal * 0.5 + 0.5, 1);
+
+	vec3 inverseTransposeNormal = normalize(vNormal * mat3(transpose(inverse(uModel * uView))));
+	vec3 lightDir = normalize(-uLightDirection * mat3(uView));
+	Colour = vec4(vec3(max(dot(inverseTransposeNormal, lightDir), 0)), 1);
+
+	// oColour = vec4(vec3(max(dot(vNormal, -uLightDirection), 0)), 1);
+}*/
